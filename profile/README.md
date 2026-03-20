@@ -22,10 +22,19 @@ XiriGo is a multi-vendor e-commerce platform built for the Maltese market. We pr
 
 | Component | Description |
 |-----------|-------------|
-| **Backend API** | Headless commerce engine with multi-vendor support, AI-powered search, and loyalty system |
+| **Backend API** | Headless commerce engine with multi-vendor support, loyalty system, and AI-powered intelligence |
 | **Vendor Panel** | Full-featured dashboard for vendors to manage products, orders, and analytics |
 | **Mobile App** | Native Android & iOS buyer experience |
 | **Admin Panel** | Platform-wide management and operations |
+
+## AI-Powered Intelligence
+
+XiriGo leverages artificial intelligence across the platform to deliver a smarter shopping experience:
+
+- **Conversational Search** — Natural language product discovery powered by LLM query understanding
+- **Hybrid Search Engine** — Combined BM25 + vector (kNN) search with semantic re-ranking for highly relevant results
+- **Personalized Recommendations** — User memory and preference learning for tailored product suggestions
+- **Smart Product Enrichment** — AI-driven variant extraction and catalog normalization at scale
 
 ## Tech Stack
 
