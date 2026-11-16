@@ -22,15 +22,15 @@ inputs:
     required: false
     default: ""
   endpoint:
-    description: "S3 endpoint, pass ${{ vars.CI_ARTIFACTS_ENDPOINT }}."
+    description: "S3 endpoint, pass the vars.CI_ARTIFACTS_ENDPOINT value (GitHub evaluates expressions in action metadata, so none may appear here)."
     required: false
     default: ""
   access-key:
-    description: "CI access key, pass ${{ secrets.CI_ARTIFACTS_CI_ACCESS_KEY }}."
+    description: "CI access key, pass the secrets.CI_ARTIFACTS_CI_ACCESS_KEY value (GitHub evaluates expressions in action metadata, so none may appear here)."
     required: false
     default: ""
   secret-key:
-    description: "CI secret key, pass ${{ secrets.CI_ARTIFACTS_CI_SECRET_KEY }}."
+    description: "CI secret key, pass the secrets.CI_ARTIFACTS_CI_SECRET_KEY value (GitHub evaluates expressions in action metadata, so none may appear here)."
     required: false
     default: ""
 outputs:
