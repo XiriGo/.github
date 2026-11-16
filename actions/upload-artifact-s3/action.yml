@@ -1,0 +1,57 @@
+name: Upload artifact (XiriGo S3)
+description: >-
+  Drop-in for the common actions/upload-artifact@v4 usage: zips the matching files and
+  uploads them to the XiriGo self-hosted S3 artifact store (no GitHub artifact storage).
+  Objects expire 7 days after upload.
+author: XiriGo
+inputs:
+  name:
+    description: Artifact name (becomes <name>.zip).
+    required: false
+    default: artifact
+  path:
+    description: >-
+      Files, directories or globs to upload, one per line (same syntax as
+      actions/upload-artifact: '*', '**', '?', '[...]', '!' to exclude).
+    required: true
+  if-no-files-found:
+    description: "What to do when nothing matches: warn, error or ignore."
+    required: false
+    default: warn
+  retention-days:
+    description: Accepted for compatibility and ignored; the bucket expires every object after 7 days.
+    required: false
+    default: ""
+  endpoint:
+    description: "S3 endpoint, pass ${{ vars.CI_ARTIFACTS_ENDPOINT }}."
+    required: false
+    default: ""
+  access-key:
+    description: "Write-only CI access key, pass ${{ secrets.CI_ARTIFACTS_CI_ACCESS_KEY }}."
+    required: false
+    default: ""
+  secret-key:
+    description: "Write-only CI secret key, pass ${{ secrets.CI_ARTIFACTS_CI_SECRET_KEY }}."
+    required: false
+    default: ""
+outputs:
+  key:
+    description: Object key inside the xirigo-ci-artifacts bucket.
+    value: ${{ steps.upload.outputs.key }}
+  size:
+    description: Uploaded zip size in bytes.
+    value: ${{ steps.upload.outputs.size }}
+runs:
+  using: composite
+  steps:
+    - id: upload
+      shell: bash
+      env:
+        INPUT_NAME: ${{ inputs.name }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_IF_NO_FILES_FOUND: ${{ inputs.if-no-files-found }}
+        INPUT_RETENTION_DAYS: ${{ inputs.retention-days }}
+        INPUT_ENDPOINT: ${{ inputs.endpoint }}
+        INPUT_ACCESS_KEY: ${{ inputs.access-key }}
+        INPUT_SECRET_KEY: ${{ inputs.secret-key }}
+      run: bash "$GITHUB_ACTION_PATH/upload.sh"
