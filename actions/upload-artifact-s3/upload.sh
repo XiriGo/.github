@@ -196,7 +196,10 @@ urlenc() { # percent-encode one key segment (RFC 3986 unreserved kept)
 
 repo="${GITHUB_REPOSITORY##*/}"
 run="${GITHUB_RUN_ID:-0}-${GITHUB_RUN_ATTEMPT:-1}"
-job="${GITHUB_JOB:-job}"
+# Job id (`github.job`: the key under `jobs:`), never the display name, so that
+# download-artifact-s3 can rebuild the key from its `job:` input.
+job="${INPUT_JOB_ID:-${GITHUB_JOB:-}}"
+[ -n "$job" ] || die "job id unknown (github.job / GITHUB_JOB empty)"
 key="$repo/$run/$job/$NAME.zip"
 enckey="$(urlenc "$repo")/$(urlenc "$run")/$(urlenc "$job")/$(urlenc "$NAME.zip")"
 

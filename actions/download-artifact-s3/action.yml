@@ -1,0 +1,56 @@
+name: Download artifact (XiriGo S3)
+description: >-
+  Drop-in for the common actions/download-artifact@v4 usage (one artifact by name):
+  downloads <name>.zip uploaded by upload-artifact-s3 from the XiriGo self-hosted S3
+  store and extracts it into `path`.
+author: XiriGo
+inputs:
+  name:
+    description: Artifact name, as given to upload-artifact-s3.
+    required: true
+  path:
+    description: Directory to extract into (created if missing).
+    required: false
+    default: "."
+  job:
+    description: >-
+      Job id of the job that uploaded the artifact: its key under `jobs:` (what
+      `github.job` returns there), not its display `name:`. Part of the object key.
+    required: true
+  run-id:
+    description: Run that produced the artifact. Default is the current run.
+    required: false
+    default: ""
+  endpoint:
+    description: "S3 endpoint, pass ${{ vars.CI_ARTIFACTS_ENDPOINT }}."
+    required: false
+    default: ""
+  access-key:
+    description: "CI access key, pass ${{ secrets.CI_ARTIFACTS_CI_ACCESS_KEY }}."
+    required: false
+    default: ""
+  secret-key:
+    description: "CI secret key, pass ${{ secrets.CI_ARTIFACTS_CI_SECRET_KEY }}."
+    required: false
+    default: ""
+outputs:
+  download-path:
+    description: Absolute path the artifact was extracted into.
+    value: ${{ steps.download.outputs.download-path }}
+  key:
+    description: Object key that was downloaded.
+    value: ${{ steps.download.outputs.key }}
+runs:
+  using: composite
+  steps:
+    - id: download
+      shell: bash
+      env:
+        INPUT_NAME: ${{ inputs.name }}
+        INPUT_PATH: ${{ inputs.path }}
+        INPUT_JOB: ${{ inputs.job }}
+        INPUT_RUN_ID: ${{ inputs.run-id }}
+        INPUT_ENDPOINT: ${{ inputs.endpoint }}
+        INPUT_ACCESS_KEY: ${{ inputs.access-key }}
+        INPUT_SECRET_KEY: ${{ inputs.secret-key }}
+      run: bash "$GITHUB_ACTION_PATH/download.sh"

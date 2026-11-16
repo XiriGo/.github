@@ -54,8 +54,10 @@ summary, together with the SHA-256 of the zip.
 - Same layout as `upload-artifact`: paths inside the zip are relative to the least common ancestor
   of the search paths. Hidden files and directories (`.name`) below that root are skipped,
   matching the `upload-artifact` ≥ 4.4 default.
-- Object key: `<repo>/<run_id>-<run_attempt>/<job>/<name>.zip`. Re-runs get their own prefix.
-  Use a distinct `name` per matrix leg, as with `upload-artifact@v4`.
+- Object key: `<repo>/<run_id>-<run_attempt>/<job>/<name>.zip`, where `<job>` is the **job id**
+  (`${{ github.job }}`, the key under `jobs:`), **not** the display `name:`. That is what
+  `download-artifact-s3`'s `job:` input expects. Re-runs get their own prefix. Use a distinct
+  `name` per matrix leg (matrix legs share the job id), as with `upload-artifact@v4`.
 - Upload: single SigV4 `PUT` with `curl --aws-sigv4`. The payload SHA-256 is signed, so the server
   rejects a corrupted upload. Retried 3 times on transient errors. A zip larger than
   **4.5 GiB** fails with a clear message (single-PUT limit). Split such artifacts.
@@ -65,11 +67,10 @@ summary, together with the SHA-256 of the zip.
 
 ## Downloading
 
-The CI identity is **write-only**: it can upload, but cannot list, download or delete. There is
-no `download-artifact` counterpart. Jobs that need a file from an earlier job in the same
-workflow should rebuild it or run in the same job. People download through an admin: either
-port-forward with admin credentials, or a presigned URL the admin generates. See the everva/k8s
-`infrastructure/ci-artifacts` PR.
+Use [`download-artifact-s3`](../download-artifact-s3/README.md) to pass an artifact to a later
+job (or another run). The CI identity can upload and read an object **by its exact key**, but cannot
+list or delete. People download through an admin: either port-forward with admin credentials,
+or a presigned URL the admin generates. See the everva/k8s `infrastructure/ci-artifacts` PR.
 
 ## `actions/cache`
 

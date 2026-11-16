@@ -27,11 +27,11 @@ inputs:
     required: false
     default: ""
   access-key:
-    description: "Write-only CI access key, pass ${{ secrets.CI_ARTIFACTS_CI_ACCESS_KEY }}."
+    description: "CI access key, pass ${{ secrets.CI_ARTIFACTS_CI_ACCESS_KEY }}."
     required: false
     default: ""
   secret-key:
-    description: "Write-only CI secret key, pass ${{ secrets.CI_ARTIFACTS_CI_SECRET_KEY }}."
+    description: "CI secret key, pass ${{ secrets.CI_ARTIFACTS_CI_SECRET_KEY }}."
     required: false
     default: ""
 outputs:
@@ -54,4 +54,7 @@ runs:
         INPUT_ENDPOINT: ${{ inputs.endpoint }}
         INPUT_ACCESS_KEY: ${{ inputs.access-key }}
         INPUT_SECRET_KEY: ${{ inputs.secret-key }}
+        # Job id (key under `jobs:`), NOT the display name: download-artifact-s3
+        # rebuilds the object key from it (its `job:` input).
+        INPUT_JOB_ID: ${{ github.job }}
       run: bash "$GITHUB_ACTION_PATH/upload.sh"
